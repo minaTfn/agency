@@ -8,7 +8,7 @@
                 buttonTitle="New User"
                 @edited="onFormItemEdit"
                 @saved="onModalSave"
-                :item="editedItem"
+                :item="form"
                 formTitle="User"
                 :dialog="formModal"
                 :isUpdate="isUpdate"
@@ -17,7 +17,7 @@
         <crud-data-table
                 :dataArray="dataArray"
                 :headers="headers"
-                :editedItem.sync="editedItem"
+                :editedItem.sync="form"
                 :editedIndex.sync="editedIndex"
                 @resetItem="resetEditedItem"
                 :dialog.sync="formModal"
@@ -29,6 +29,7 @@
     import CrudDataTable from "../components/common/CrudDataTable";
     import api from "../helpers/api";
     import UserFormModal from "../components/UserFormModal";
+    import Form from "../helpers/classes/Form";
 
     export default {
         name: "Users",
@@ -40,15 +41,17 @@
             headers: [],
             dataArray: [],
             editedIndex: -1,
-            editedItem: {
+            form: new Form({
                 first_name: '',
                 last_name: '',
+                email: '',
                 phone_number: '',
                 status: 0,
                 agency_id: '',
+                password: '',
+                verify_password: '',
                 id: ''
-            },
-            errors: {}
+            }),
         }),
 
         created() {
@@ -89,35 +92,36 @@
 
             resetEditedItem() {
                 this.formModal = false
-                this.editedItem = Object.assign({}, this.$options.data()['editedItem'])
-                this.errors = {};
+                this.form = Object.assign(this.form, this.$options.data()['form'])
                 this.editedIndex = -1
             },
 
             onFormItemEdit(item) {
-                this.editedItem[item.field] = item.value
+                this.form[item.field] = item.value
             },
 
-            onModalSave: async function () {
+            onSuccess() {
+                this.formModal = false;
+                this.getData();
+            },
+
+            onModalSave() {
 
                 if (this.isUpdate) {
-                    await api.user.update(this.editedItem.id, this.editedItem)
-                        .catch(error => {
-                            this.errors = error.response.data;
-                        })
+
+                    this.form.submit('user.update')
+                        .then(() => {
+                            this.onSuccess();
+                        }).catch(error => this.form.errors.record(error));
 
                 } else {
-                    await api.user.create(this.editedItem)
-                        .catch(error => {
-                            this.errors = error.response.data;
-                        })
+
+                    this.form.submit('user.create')
+                        .then(() => {
+                            this.onSuccess();
+                        }).catch(error => this.form.errors.record(error));
+
                 }
-
-                this.$nextTick(function () {
-                    this.formModal = false;
-                    this.getData();
-                })
-
             },
 
         },

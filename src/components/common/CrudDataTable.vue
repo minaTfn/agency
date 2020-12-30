@@ -95,7 +95,7 @@
 
             setEditedItem(item) {
                 this.$emit('update:editedIndex', this.dataArray.indexOf(item))
-                this.$emit('update:editedItem', Object.assign({}, item))
+                this.$emit('update:editedItem', Object.assign(this.editedItem, item))
             },
         },
     }

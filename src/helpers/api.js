@@ -19,7 +19,7 @@ export default {
         editUserInfo: (data) => request.put(`auth/edit-profile`, data).then(res => res.data),
         list: (params) => request.get(`users`, params).then(res => res.data),
         create: (params) => request.post(`users`, params).then(res => res.data.data),
-        update: (id, params) => request.put(`users/${id}`, params).then(res => res.data.data),
+        update: (params) => request.put(`users/${params.id}`, params).then(res => res.data.data),
     },
     agency: {
         list: () => request.get(`agencies`).then(res => res.data.items),

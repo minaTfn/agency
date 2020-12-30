@@ -15,6 +15,7 @@
                                         label="First Name"
                                         :value="item.first_name"
                                         name="first_name"
+                                        :error-messages="item.errors.get('first_name')"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
@@ -22,6 +23,7 @@
                                         label="Last Name"
                                         :value="item.last_name"
                                         name="last_name"
+                                        :error-messages="item.errors.get('last_name')"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
@@ -29,6 +31,7 @@
                                         label="Email"
                                         :value="item.email"
                                         name="email"
+                                        :error-messages="item.errors.get('email')"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
@@ -36,6 +39,7 @@
                                         label="Phone Number"
                                         :value="item.phone_number"
                                         name="phone_number"
+                                        :error-messages="item.errors.get('phone_number')"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
@@ -43,6 +47,7 @@
                                         label="Status"
                                         :value="item.status"
                                         name="status"
+                                        :error-messages="item.errors.get('status')"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
@@ -50,6 +55,7 @@
                                         label="Agency"
                                         :value="item.agency_id"
                                         name="agency_id"
+                                        :error-messages="item.errors.get('agency_id')"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4" v-if=" ! isUpdate">
@@ -58,6 +64,7 @@
                                         :value="item.password"
                                         name="password"
                                         type="password"
+                                        :error-messages="item.errors.get('password')"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4" v-if=" ! isUpdate">
@@ -66,6 +73,7 @@
                                         :value="item.verify_password"
                                         name="verify_password"
                                         type="password"
+                                        :error-messages="item.errors.get('verify_password')"
                                 ></v-text-field>
                             </v-col>
                         </v-row>

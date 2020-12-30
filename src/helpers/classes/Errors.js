@@ -51,6 +51,7 @@ class Errors {
         for (const [key, value] of Object.entries(errors)) {
             newError[value.field] = value.message
         }
+
         this.errors = newError;
 
         // laravel version
