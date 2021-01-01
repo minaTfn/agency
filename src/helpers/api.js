@@ -17,9 +17,10 @@ export default {
         login: (credentials) => request.post(`auth/login`, credentials).then((res) => res.data),
         fetchCurrentUser: () => request.get(`auth/user-profile`).then(res => res.data.data),
         editUserInfo: (data) => request.put(`auth/edit-profile`, data).then(res => res.data),
-        list: (params) => request.get(`users`, params).then(res => res.data),
+        list: (params) => request.get(`users?${params}`).then(res => res.data),
         create: (params) => request.post(`users`, params).then(res => res.data.data),
         update: (params) => request.put(`users/${params.id}`, params).then(res => res.data.data),
+        delete: (params) => request.delete(`users/${params.id}`).then(res => res.data),
     },
     agency: {
         list: () => request.get(`agencies`).then(res => res.data.items),

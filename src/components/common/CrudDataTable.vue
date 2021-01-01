@@ -4,10 +4,13 @@
             loading-text="Loading... Please wait"
             :headers="headers"
             :items="dataArray"
-            sort-by="calories"
+            sort-by="first_name"
             class="elevation-1"
             :search="search"
+            :options.sync="options"
+            :server-items-length="200"
     >
+
         <template v-slot:top>
             <v-toolbar flat>
                 <v-text-field
@@ -17,18 +20,6 @@
                         hide-details
                 ></v-text-field>
             </v-toolbar>
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="editItem(item)">
-                mdi-pencil
-            </v-icon>
-            <v-icon small @click="deleteItem(item)">
-                mdi-delete
-            </v-icon>
-        </template>
-
-        <template v-slot:top>
             <v-dialog v-model="deleteDialog" max-width="500px">
                 <v-card>
                     <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
@@ -42,36 +33,94 @@
             </v-dialog>
         </template>
 
+        <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="editItem(item)">
+                mdi-pencil
+            </v-icon>
+            <v-icon small @click="deleteItem(item)">
+                mdi-delete
+            </v-icon>
+        </template>
+
     </v-data-table>
 </template>
 <script>
 
-
     export default {
         name: "CrudDataTable",
         props: {
-            dataArray: {default: {}},
+            getDataApi: String,
+            deleteApi: String,
             headers: {},
-            isLoading: {default: false},
             editedItem: {},
             editedIndex: {},
         },
         data: () => ({
             search: '',
             deleteDialog: false,
-            data: [],
+            dataArray: [],
+            options: {},
+            isLoading: false
         }),
 
         watch: {
+            search(val){
+                this.addToOptions(val);
+            },
+
+            options: {
+                handler() {
+                    this.getData()
+                },
+            },
+
             /*
             * used for when user clicks outside of dialog
             */
             deleteDialog(val) {
-                val || this.closeDeleteDialog()
+                val || this.closeDeleteDialog();
             },
         },
 
+        computed: {
+            queryString() {
+                return Object.keys(this.options)
+                    .map(key => key + '=' + this.options[key]).join('&');
+            },
+
+            /*
+            * returns the real api path from nested string in api.js
+            * ex) "user.list" returns api.user.list
+            */
+            getListApi() {
+                return this.editedItem.getRealPath(this.getDataApi);
+            },
+            getDeleteApi() {
+                return this.editedItem.getRealPath(this.deleteApi);
+            }
+        },
+
+        mounted() {
+            this.getData();
+        },
+
         methods: {
+
+            getData() {
+                this.isLoading = true;
+
+                this.getListApi(this.queryString).then((res) => {
+
+                    this.dataArray = res.items;
+                    this.isLoading = false;
+                });
+
+            },
+
+            addToOptions(val){
+                this.$set(this.options,'q', val)
+            },
+
 
             editItem(item) {
                 this.setEditedItem(item);
@@ -89,8 +138,14 @@
             },
 
             deleteItemConfirm() {
-                this.$emit('update:editedItem', this.dataArray.splice(this.editedIndex, 1))
-                this.closeDeleteDialog()
+                this.getDeleteApi(this.editedItem).then(() => {
+
+                    // this.$emit('update:editedItem', this.dataArray.splice(this.editedIndex, 1))
+                    this.closeDeleteDialog()
+                    this.getData();
+
+                });
+
             },
 
             setEditedItem(item) {

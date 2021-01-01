@@ -1,33 +1,32 @@
 <template>
     <div>
         <v-btn color="primary" dark class="mb-2" @click="formModal=true">
-            New User
+            New {{pageTitle}}
         </v-btn>
 
         <user-form-modal
                 buttonTitle="New User"
-                @edited="onFormItemEdit"
                 @saved="onModalSave"
                 :item="form"
-                formTitle="User"
+                :formTitle="pageTitle"
                 :dialog="formModal"
                 :isUpdate="isUpdate"
                 @resetItem="resetEditedItem"/>
 
         <crud-data-table
-                :dataArray="dataArray"
                 :headers="headers"
                 :editedItem.sync="form"
+                ref="dataTable"
                 :editedIndex.sync="editedIndex"
                 @resetItem="resetEditedItem"
-                :dialog.sync="formModal"
-                :isLoading="isLoading"/>
+                getDataApi="user.list"
+                deleteApi="user.delete"
+                :dialog.sync="formModal"/>
     </div>
 
 </template>
 <script>
     import CrudDataTable from "../components/common/CrudDataTable";
-    import api from "../helpers/api";
     import UserFormModal from "../components/UserFormModal";
     import Form from "../helpers/classes/Form";
 
@@ -35,11 +34,9 @@
         name: "Users",
         components: {UserFormModal, CrudDataTable},
         data: () => ({
+            pageTitle: 'User',
             formModal: false,
-            search: '',
-            isLoading: false,
             headers: [],
-            dataArray: [],
             editedIndex: -1,
             form: new Form({
                 first_name: '',
@@ -48,6 +45,7 @@
                 phone_number: '',
                 status: 0,
                 agency_id: '',
+                role: '',
                 password: '',
                 verify_password: '',
                 id: ''
@@ -55,7 +53,6 @@
         }),
 
         created() {
-            this.getData();
             this.setHeaders();
         },
 
@@ -67,23 +64,12 @@
 
         methods: {
 
-            getData() {
-                this.isLoading = true;
-
-                api.user.list().then((res) => {
-
-                    this.dataArray = res.items;
-                    this.isLoading = false;
-                });
-
-            },
-
             setHeaders() {
                 this.headers = [
                     {text: 'First Name', value: 'first_name'},
                     {text: 'Last Name', value: 'last_name'},
                     {text: 'Email', value: 'email'},
-                    {text: 'Phone Number', value: 'phone_number'},
+                    {text: 'Phone Number', value: 'phone_number', sortable: false},
                     {text: 'Status', value: 'status'},
                     {text: 'Agency', value: 'agency_id'},
                     {text: 'Actions', value: 'actions', sortable: false},
@@ -92,17 +78,13 @@
 
             resetEditedItem() {
                 this.formModal = false
-                this.form = Object.assign(this.form, this.$options.data()['form'])
+                this.form.reset();
                 this.editedIndex = -1
             },
 
-            onFormItemEdit(item) {
-                this.form[item.field] = item.value
-            },
-
             onSuccess() {
-                this.formModal = false;
-                this.getData();
+                this.resetEditedItem();
+                this.$refs.dataTable.getData();
             },
 
             onModalSave() {
@@ -115,7 +97,6 @@
                         }).catch(error => this.form.errors.record(error));
 
                 } else {
-
                     this.form.submit('user.create')
                         .then(() => {
                             this.onSuccess();

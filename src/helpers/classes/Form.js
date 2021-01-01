@@ -52,7 +52,7 @@ class Form {
         return new Promise((resolve, reject) => {
             path(this.data())
                 .then(response => {
-                    this.onSuccess(response);
+                    this.onSuccess();
 
                     resolve(response);
                 })
@@ -88,8 +88,7 @@ class Form {
      *
      * @param {object} data
      */
-    onSuccess(data) {
-        console.log(data); // temporary
+    onSuccess() {
 
         this.reset();
     }
