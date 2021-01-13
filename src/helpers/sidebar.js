@@ -1,6 +1,6 @@
 export default [
     {title: 'Manage Users', type: 'link', icon: 'mdi-account-group', link: '/users'},
-    {title: 'Manage Agencies', type: 'link', icon: 'mdi-home-floor-a', link: '/agencies'},
+    {title: 'Manage Agencies', type: 'link', icon: 'mdi-home-account', link: '/agencies'},
     {
         title: 'Goals',
         type: 'dropdown',

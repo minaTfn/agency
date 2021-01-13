@@ -1,15 +1,17 @@
 <template>
     <v-data-table
             :loading="isLoading"
-            loading-text="Loading... Please wait"
+            loading-text="Loading..."
             :headers="headers"
-            :items="dataArray"
-            sort-by="first_name"
+            :items="data"
             class="elevation-1"
             :search="search"
             :options.sync="options"
-            :server-items-length="200"
-    >
+            :items-per-page="perPage"
+            :server-items-length="totalCount"
+            :footer-props="{
+              itemsPerPageOptions: [ 10, 15,20, -1 ]
+            }">
 
         <template v-slot:top>
             <v-toolbar flat>
@@ -33,38 +35,61 @@
             </v-dialog>
         </template>
 
+        <template v-for="customValue in customValues"
+                  :slot="`item.${customValue.name}`"
+                  slot-scope="{item}">
+
+            {{ customValue.values[item[customValue.name]] }}
+
+        </template>
+
         <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="editItem(item)">
-                mdi-pencil
-            </v-icon>
-            <v-icon small @click="deleteItem(item)">
+
+            <fragment v-if="actions">
+                <v-icon v-for="action in actions"
+                        :key="action.name"
+                        small
+                        class="mr-2"
+                        @click="$emit(action.event, item)">
+
+                    {{ action.icon }}
+
+                </v-icon>
+            </fragment>
+
+
+            <v-icon v-if="!disableDelete" small class="mr-2" @click="deleteItem(item)">
                 mdi-delete
             </v-icon>
+
         </template>
 
     </v-data-table>
 </template>
 <script>
+    import {Fragment} from 'vue-fragment'
 
     export default {
         name: "CrudDataTable",
+        components: {Fragment},
         props: {
-            getDataApi: String,
-            deleteApi: String,
             headers: {},
-            editedItem: {},
-            editedIndex: {},
+            data: {},
+            actions: {},
+            customValues: {},
+            totalCount: Number,
+            perPage: {default: 20, type: Number},
+            disableDelete: {default: false, type: Boolean}
         },
         data: () => ({
             search: '',
             deleteDialog: false,
-            dataArray: [],
             options: {},
-            isLoading: false
+            isLoading: false,
         }),
 
         watch: {
-            search(val){
+            search(val) {
                 this.addToOptions(val);
             },
 
@@ -72,6 +97,7 @@
                 handler() {
                     this.getData()
                 },
+                deep: true
             },
 
             /*
@@ -82,75 +108,53 @@
             },
         },
 
-        computed: {
-            queryString() {
-                return Object.keys(this.options)
-                    .map(key => key + '=' + this.options[key]).join('&');
-            },
-
-            /*
-            * returns the real api path from nested string in api.js
-            * ex) "user.list" returns api.user.list
-            */
-            getListApi() {
-                return this.editedItem.getRealPath(this.getDataApi);
-            },
-            getDeleteApi() {
-                return this.editedItem.getRealPath(this.deleteApi);
-            }
-        },
-
         mounted() {
             this.getData();
         },
 
         methods: {
-
             getData() {
                 this.isLoading = true;
 
-                this.getListApi(this.queryString).then((res) => {
-
-                    this.dataArray = res.items;
-                    this.isLoading = false;
+                this.$emit('getData', this.convertToYiiQueryString());
+                this.$nextTick(() => {
+                    this.isLoading = false
                 });
-
             },
 
-            addToOptions(val){
-                this.$set(this.options,'q', val)
+            convertToYiiQueryString() {
+                let options = [];
+                options['page'] = this.options.page;
+                if (this.options.q)
+                    options['q'] = this.options.q;
+                options['per-page'] = this.options.itemsPerPage;
+                options['sort'] = (this.options.sortDesc[0] ? '-' : '') + this.options.sortBy;
+
+                return Object.keys(options)
+                    .map(key => key + '=' + options[key]).join('&');
             },
 
-
-            editItem(item) {
-                this.setEditedItem(item);
-                this.$emit('update:dialog', true)
+            addToOptions(val) {
+                this.$set(this.options, 'q', val)
             },
 
             deleteItem(item) {
-                this.setEditedItem(item);
+
+                this.$emit('delete', item);
                 this.deleteDialog = true
             },
 
             closeDeleteDialog() {
+
+                this.$emit('resetForm');
                 this.deleteDialog = false
-                this.$emit('resetItem');
             },
 
             deleteItemConfirm() {
-                this.getDeleteApi(this.editedItem).then(() => {
 
-                    // this.$emit('update:editedItem', this.dataArray.splice(this.editedIndex, 1))
-                    this.closeDeleteDialog()
-                    this.getData();
+                this.$emit('deleteItem');
 
-                });
-
-            },
-
-            setEditedItem(item) {
-                this.$emit('update:editedIndex', this.dataArray.indexOf(item))
-                this.$emit('update:editedItem', Object.assign(this.editedItem, item))
+                this.closeDeleteDialog()
             },
         },
     }

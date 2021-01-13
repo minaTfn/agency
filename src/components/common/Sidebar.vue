@@ -10,7 +10,8 @@
                         :to="item.link"
                         v-if="item.type == 'link'"
                         link
-                >
+                        exact>
+
                     <v-list-item-icon>
                         <v-icon>{{ item.icon }}</v-icon>
                     </v-list-item-icon>
@@ -18,6 +19,7 @@
                     <v-list-item-content>
                         <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item-content>
+
                 </v-list-item>
 
                 <v-list-group
@@ -36,7 +38,8 @@
                     <v-list-item
                             :key="dropDownItem.title"
                             v-for="dropDownItem in item.dropDownItems"
-                            :to="dropDownItem.link">
+                            :to="dropDownItem.link"
+                            exact>
                         <v-list-item-content>
                             <v-list-item-title>{{dropDownItem.title}}</v-list-item-title>
                         </v-list-item-content>
@@ -61,13 +64,3 @@
         }
     }
 </script>
-
-<style>
-    .v-application--is-ltr .v-list-item__action:first-child,
-    .v-application--is-ltr .v-list-item__icon:first-child{
-        margin-right: 15px !important;
-    }
-    .v-application--is-ltr .v-list-group--no-action > .v-list-group__items > .v-list-item {
-        padding-left: 56px;
-    }
-</style>
