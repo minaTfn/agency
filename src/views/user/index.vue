@@ -12,10 +12,10 @@
                 @getData="getAllUsers"
                 @deleteItem="deleteUser"
                 :data="data"
-                @edit="onEdit"
-                @changePassword="onChangePassword"
-                @delete="onDelete"
-                @resetForm="onResetForm"
+                @edit="editItem"
+                @changePassword="changePassword"
+                @delete="deleteItem"
+                @resetForm="resetForm"
                 :actions="actions"
                 :customValues="customValues"
                 :totalCount="totalCount"
@@ -70,13 +70,7 @@
 
             ...mapActions('users', ['getAllUsers','deleteUser']),
 
-            ...mapMutations('users', {
-                onEdit: 'edit',
-                onChangePassword:'changePassword',
-                onDelete: 'delete',
-                onResetForm: 'resetForm',
-            }),
-
+            ...mapMutations('users', ['editItem', 'changePassword', 'deleteItem', 'resetForm',]),
 
         },
     }

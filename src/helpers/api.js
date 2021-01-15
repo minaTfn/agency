@@ -37,8 +37,8 @@ export default {
     },
     goalProfile: {
         list: (params = '') => request.get(`goal-profiles?expand=agency&${params}`).then(res => res.data),
-        view: (params = '') => request.get(`goal-profiles/${params.id}?expand=goalProfileGoals&${params}`).then(res => res.data),
-        create: (params) => request.post(`goal-profiles`, params).then(res => res.data.data),
+        goals: (goalProfileID) => request.get(`goal-profiles/${goalProfileID}?expand=goalProfileGoals`).then(res => res.data),
+        create: (params) => request.post(`goal-profiles`, params).then(res => res.data),
         update: (params) => request.put(`goal-profiles/${params.id}`, params).then(res => res.data.data),
         delete: (params) => request.delete(`goal-profiles/${params.id}`).then(res => res.data)
     }

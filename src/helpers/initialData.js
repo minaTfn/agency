@@ -9,4 +9,15 @@ export const statuses = [
     }
 ];
 
+export const types = [
+    {
+        id: 1,
+        name: "Sales"
+    },
+    {
+        id: 2,
+        name: "Service"
+    }
+];
+
 export const roles = ["Admin", "Principal", "Sales", "Service"];

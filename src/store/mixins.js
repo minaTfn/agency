@@ -16,16 +16,16 @@ export const mixinMutations = () => {
         setMeta(state, meta) {
             state.meta = meta
         },
-        new(state) {
+        newItem(state) {
             state.actionType = 'create';
             state.isModalOpen = true
         },
-        edit(state, item) {
+        editItem(state, item) {
             state.isModalOpen = true
             state.actionType = 'update';
             state.form = Object.assign(state.form, item)
         },
-        delete(state, item) {
+        deleteItem(state, item) {
             state.actionType = 'delete';
             state.form = Object.assign(state.form, item)
         },
@@ -40,6 +40,6 @@ export const mixinMutations = () => {
         },
         getErrors(state, error) {
             state.form.errors.record(error)
-        }
+        },
     };
 }

@@ -1,5 +1,7 @@
 <template>
     <v-data-table
+
+
             :loading="isLoading"
             loading-text="Loading..."
             :headers="headers"
@@ -7,14 +9,15 @@
             class="elevation-1"
             :search="search"
             :options.sync="options"
+            :hide-default-footer="disablePagination"
             :items-per-page="perPage"
             :server-items-length="totalCount"
             :footer-props="{
-              itemsPerPageOptions: [ 10, 15,20, -1 ]
+              itemsPerPageOptions: [ 10, 15,20, -1 ],
             }">
 
         <template v-slot:top>
-            <v-toolbar flat>
+            <v-toolbar v-if="isSearchActive" flat>
                 <v-text-field
                         v-model="search"
                         append-icon="mdi-magnify"
@@ -77,6 +80,8 @@
             data: {},
             actions: {},
             customValues: {},
+            isSearchActive: {default: true, type: Boolean},
+            disablePagination: {default: false, type: Boolean},
             totalCount: Number,
             perPage: {default: 20, type: Number},
             disableDelete: {default: false, type: Boolean}

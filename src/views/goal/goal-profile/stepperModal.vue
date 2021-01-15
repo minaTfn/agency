@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-btn color="primary" dark @click="newGoalProfile">
+        <v-btn color="primary" dark @click="newItem">
             <v-icon left>
                 mdi-plus
             </v-icon>
@@ -11,128 +11,121 @@
                 @click:outside="close"
                 @keydown.esc="close"
                 v-model="isModalOpen"
-                max-width="700px">
+                max-width="1000px">
             <v-card>
-                <v-card-title>
-                    <span class="headline" v-html="title"></span>
-                </v-card-title>
 
-                <stepper :steps="Object.entries(steps).length">
+                <v-stepper v-model="currentStep" @change="changeStep">
+                    <v-stepper-header>
+                        <template v-for="stepNum in stepsCount">
+                            <v-stepper-step
+                                    :key="`${stepNum}-step`"
+                                    :complete="currentStep > stepNum"
+                                    :step="stepNum"
+                                    :editable="stepNum==1">
 
-                    <template v-slot:step="stepper">
-                        <span v-for="(step, index) in steps"
-                              :key="step"
-                              v-show="stepper.current == index">
-                            {{ step }}
+                                <span v-for="(step, index) in steps"
+                                      :key="step"
+                                      v-show="stepNum == index">
+                            {{ title(step) }}
                         </span>
-                    </template>
-                    <template v-slot:default="stepper">
-                        <div v-if="stepper.current == 1">
-                            <v-card
 
-                                    class="mb-12"
-                                    color="grey lighten-1"
-                                    height="400px"
-                            >step 1
-                            </v-card>
-                        </div>
+                            </v-stepper-step>
 
-                        <div v-if="stepper.current == 2">
-                            <v-card
+                            <v-divider
+                                    v-if="stepNum !== stepsCount"
+                                    :key="stepNum"
+                            ></v-divider>
 
-                                    class="mb-12"
-                                    color="grey lighten-1"
-                                    height="400px"
-                            >step 2
-                            </v-card>
-                        </div>
-                        <div v-if="stepper.current == 3">
-                            <v-card
+                        </template>
+                    </v-stepper-header>
 
-                                    class="mb-12"
-                                    color="grey lighten-1"
-                                    height="400px"
-                            >step 3
-                            </v-card>
-                        </div>
+                    <v-stepper-items>
+                        <v-stepper-content
+                                v-for="n in stepsCount"
+                                :key="`${n}-content`"
+                                :step="n">
 
-                    </template>
-                </stepper>
+                            <goal-profile-form v-if="n == 1"
+                                               :isActive="isModalOpen"
+                                               @next="nextStep(n)"
+                                               @close="close">
+
+                            </goal-profile-form>
+
+                            <div v-if="n == 2">
+
+                                <goal-profile-goal-form />
+
+                                <goals-grid-view />
+
+                                <v-card-actions class="mt-6 justify-end">
+                                    <v-btn color="primary" class="px-6" @click="close">
+                                        Done
+                                    </v-btn>
+
+                                </v-card-actions>
+
+                            </div>
+
+
+                        </v-stepper-content>
+                    </v-stepper-items>
+                </v-stepper>
             </v-card>
         </v-dialog>
     </div>
 </template>
 
 <script>
-    import {statuses, roles} from "../../../helpers/initialData";
     import {mapActions, mapState, mapMutations, mapGetters} from "vuex";
-    import _ from 'lodash'
-    import Form from "../../../helpers/classes/Form";
-    import Stepper from '../../../components/Stepper'
+
+    import GoalProfileForm from "./goalProfileForm";
+    import GoalProfileGoalForm from "./goalProfileGoalForm";
+    import GoalsGridView from "./goalsGridView";
 
     export default {
-        name: "GoalProfileFormModal",
-        components: {Stepper},
+        name: "StepperModal",
+        components: {GoalProfileForm, GoalProfileGoalForm, GoalsGridView},
         props: ['formTitle'],
 
         data: () => ({
-            steps: {1: 'Goal Profile', 2: 'Goal profile goals'},
-            form: new Form(),
-            statuses: statuses,
+            steps: {1: 'Goal Profile', 2: 'Goals'},
+            currentStep: 1,
         }),
 
         computed: {
 
-            ...mapState({
-                isModalOpen: state => state.goalProfiles.isModalOpen,
-                agencies: state => state.goalProfiles.agencies,
-            }),
+            ...mapState('goalProfiles', ['isModalOpen', 'agencies']),
 
             ...mapGetters('goalProfiles', ['isUpdate']),
 
-            title() {
-
-                return `${(this.isUpdate) ? 'Edit' : 'New'} ${this.formTitle}`;
+            stepsCount() {
+                return Object.entries(this.steps).length
             }
-        },
-
-        filters: {
-            toNumber(data) {
-                return +data;
-            }
-        },
-
-        watch: {
-            isModalOpen() {
-                this.form = _.cloneDeep(this.$store.state.goalProfiles.form)
-            },
-            form: {
-                handler: _.debounce(function (form) {
-                    this.updateForm(form);
-                }, 500), deep: true
-            }
-        },
-
-        mounted() {
-            this.getAgencies();
         },
 
         methods: {
 
-            ...mapActions('goalProfiles', ['save', 'getAgencies']),
+            ...mapActions('goalProfiles', ['save']),
 
-            ...mapMutations('goalProfiles', {
-                resetForm: 'resetForm',
-                updateForm: 'updateForm',
-                closeModal: 'closeModal',
-                newGoalProfile: 'new'
-            }),
+            ...mapMutations('goalProfiles', ['changeStep','resetForm', 'updateForm', 'closeModal', 'newItem']),
 
-            saveForm() {
+            title(step) {
+                return `${(this.isUpdate) ? 'Edit' : 'Add'} ${step}`;
+            },
 
-                this.$nextTick(() => {
-                    this.save(this.form);
-                })
+            nextStep(n) {
+                if (n < this.stepsCount) {
+                    this.currentStep = n + 1
+                }
+            },
+
+            changeStep(step){
+                if(step == 1)
+                    this.changeStep('goalProfile');
+                else if(step == 2)
+                    this.changeStep('addGoals');
+
             },
 
             close() {

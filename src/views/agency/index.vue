@@ -12,9 +12,9 @@
                 @getData="getAllAgencies"
                 @deleteItem="deleteAgency"
                 :data="data"
-                @edit="onEdit"
-                @delete="onDelete"
-                @resetForm="onResetForm"
+                @edit="editItem"
+                @delete="deleteItem"
+                @resetForm="resetForm"
                 :actions="actions"
                 :customValues="customValues"
                 :totalCount="totalCount"
@@ -65,12 +65,7 @@
 
             ...mapActions('agencies', ['getAllAgencies','deleteAgency']),
 
-            ...mapMutations('agencies', {
-                onEdit: 'edit',
-                onDelete: 'delete',
-                onResetForm: 'resetForm',
-            }),
-
+            ...mapMutations('agencies', ['editItem', 'deleteItem', 'resetForm',]),
 
         },
     }

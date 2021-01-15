@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-btn color="primary" dark @click="newUser">
+        <v-btn color="primary" dark @click="newItem">
             <v-icon left>
                 mdi-account-plus
             </v-icon>
@@ -153,12 +153,7 @@
 
         computed: {
 
-
-            ...mapState({
-                isModalOpen: state => state.users.isModalOpen,
-                agencies: state => state.users.agencies,
-            }),
-
+            ...mapState('users',['isModalOpen', 'agencies']),
 
             ...mapGetters('users', ['isUpdate', 'isChangePassword']),
 
@@ -188,12 +183,7 @@
 
             ...mapActions('users', ['save','getAgencies']),
 
-            ...mapMutations('users', {
-                resetForm: 'resetForm',
-                updateForm: 'updateForm',
-                closeModal: 'closeModal',
-                newUser: 'new'
-            }),
+            ...mapMutations('users', ['resetForm', 'updateForm', 'closeModal', 'newItem']),
 
             saveForm() {
 

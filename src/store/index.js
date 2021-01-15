@@ -5,6 +5,7 @@ import agencies from './modules/agencies'
 import goals from './modules/goals'
 import snackbar from './modules/snackbar'
 import goalProfiles from './modules/goal-profiles'
+import goalProfileGoals from './modules/goal-profile-goals'
 
 Vue.use(Vuex)
 
@@ -17,6 +18,7 @@ export default new Vuex.Store({
         agencies,
         goals,
         goalProfiles,
+        goalProfileGoals,
         snackbar,
     },
     strict: debug,

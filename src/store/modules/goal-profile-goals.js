@@ -7,14 +7,12 @@ const state = () => ({
     ...mixinStates(),
 
     form: new Form({
-        name: '',
-        status: '',
-        agency_id: '',
-        type: '',
+        goal_id: '',
+        percentage: '',
         id: ''
     }),
-    currentStep:'',
-    agencies: [],
+    goalProfileId: 0,
+    goals: [],
 })
 
 const getters = {
@@ -25,25 +23,24 @@ const getters = {
 
 const actions = {
 
-    getAllGoalProfiles({commit}, params) {
+    getAllGoalProfileGoals({commit,state}) {
 
-        api.goalProfile.list(params).then(({items, _meta}) => {
+        api.goalProfile.goals(state.goalProfileId).then(({items}) => {
             commit('fetchAll', items);
-            commit('setMeta', _meta);
         });
     },
 
-    getAgencies({commit}) {
-        api.agency.list().then(response => {
-            commit('fetchAgencies', response.items);
+    getGoals({commit}) {
+        api.goal.list().then(response => {
+            commit('fetchGoals', response.items);
         });
     },
 
-    deleteGoalProfile({commit, dispatch, state}) {
+    deleteGoalProfileGoal({dispatch, state}) {
 
         api.goalProfile.delete(state.form).then(() => {
 
-            dispatch('getAllGoalProfiles');
+            dispatch('getAllGoalProfileGoals');
 
             this._vm.$snackbar.showMessage({message: 'Item deleted successfully'})
         }).catch(error => {
@@ -66,22 +63,15 @@ const actions = {
 
         const message = getters.isUpdate ? 'Item updated' : 'Item created'
 
-        return new Promise((resolve,reject)=>{
-            dispatch(action, data).then((response) => {
+        dispatch(action, data).then(() => {
 
-                commit('resetForm');
-                dispatch('getAllGoalProfiles');
-                this._vm.$snackbar.showMessage({message: `${message} successfully`})
+            commit('resetForm');
+            dispatch('getAllGoalProfileGoals');
+            this._vm.$snackbar.showMessage({message: `${message} successfully`})
 
-                resolve(response);
-
-            }).catch(error => {
-                commit('getErrors', error.response.data)
-                reject(error.response.data);
-            });
-        })
-
-
+        }).catch(error => {
+            commit('getErrors', error.response.data)
+        });
 
     },
 
@@ -91,12 +81,12 @@ const mutations = {
 
     ...mixinMutations(),
 
-    changeStep(state,step){
-        state.currentStep = step
+    setGoalProfileId(state, ID) {
+        state.goalProfileId = ID
     },
 
-    fetchAgencies(state, agencies) {
-        state.agencies = agencies
+    fetchGoals(state, goals) {
+        state.goals = goals
     },
 }
 

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-btn color="primary" dark @click="newGoalProfile">
+        <v-btn color="primary" dark @click="newItem">
             <v-icon left>
                 mdi-plus
             </v-icon>
@@ -12,7 +12,6 @@
                 @keydown.esc="close"
                 v-model="isModalOpen"
                 max-width="700px">
-
             <v-card>
                 <form @keydown="form.errors.clear($event.target.name)">
 
@@ -32,7 +31,7 @@
                                             :error-messages="form.errors.get('name')"
                                     ></v-text-field>
                                 </v-col>
-                                <v-col cols="12" sm="6">
+                                <v-col cols="12" sm="6" >
                                     <v-autocomplete
                                             v-model="form.agency_id"
                                             label="Agency"
@@ -48,15 +47,6 @@
 
                                 </v-col>
                                 <v-col cols="12" sm="6">
-                                    <v-text-field
-                                            label="Type"
-                                            v-model="form.type"
-                                            name="type"
-                                            autofocus
-                                            :error-messages="form.errors.get('type')"
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="6">
                                     <v-autocomplete
                                             v-model="form.status"
                                             label="Status"
@@ -67,6 +57,14 @@
                                             :error-messages="form.errors.get('status')"
                                             flat
                                     ></v-autocomplete>
+                                </v-col>
+                                <v-col cols="12" sm="6">
+                                    <v-checkbox
+                                            v-model="form.static"
+                                            label="Static"
+                                            :true-value="1"
+                                            :false-value="0"
+                                    ></v-checkbox>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -89,13 +87,14 @@
 </template>
 
 <script>
-    import {statuses, roles} from "../../../helpers/initialData";
+    import {statuses, roles} from "../../helpers/initialData";
     import {mapActions, mapState, mapMutations, mapGetters} from "vuex";
     import _ from 'lodash'
-    import Form from "../../../helpers/classes/Form";
+    import Form from "../../helpers/classes/Form";
 
     export default {
-        name: "GoalProfileFormModal",
+        name: "GoalFormModal",
+
         props: ['formTitle'],
 
         data: () => ({
@@ -105,12 +104,11 @@
 
         computed: {
 
-            ...mapState({
-                isModalOpen: state => state.goalProfiles.isModalOpen,
-                agencies: state => state.goalProfiles.agencies,
-            }),
 
-            ...mapGetters('goalProfiles', ['isUpdate']),
+            ...mapState('goals',['isModalOpen', 'agencies']),
+
+
+            ...mapGetters('goals', ['isUpdate']),
 
             title() {
 
@@ -118,15 +116,15 @@
             }
         },
 
-        filters: {
-            toNumber(data) {
-                return +data;
+        filters :{
+            toNumber(data){
+                return + data;
             }
         },
 
         watch: {
             isModalOpen() {
-                this.form = _.cloneDeep(this.$store.state.goalProfiles.form)
+                this.form = _.cloneDeep(this.$store.state.goals.form)
             },
             form: {
                 handler: _.debounce(function (form) {
@@ -141,14 +139,9 @@
 
         methods: {
 
-            ...mapActions('goalProfiles', ['save', 'getAgencies']),
+            ...mapActions('goals', ['save','getAgencies']),
 
-            ...mapMutations('goalProfiles', {
-                resetForm: 'resetForm',
-                updateForm: 'updateForm',
-                closeModal: 'closeModal',
-                newGoalProfile: 'new'
-            }),
+            ...mapMutations('goals', ['resetForm', 'updateForm', 'closeModal', 'newItem']),
 
             saveForm() {
 

@@ -12,9 +12,9 @@
                 @getData="getAllGoalProfiles"
                 @deleteItem="deleteGoalProfile"
                 :data="data"
-                @edit="onEdit"
-                @delete="onDelete"
-                @resetForm="onResetForm"
+                @edit="editItem"
+                @delete="deleteItem"
+                @resetForm="resetForm"
                 :actions="actions"
                 :customValues="customValues"
                 :totalCount="totalCount"
@@ -72,13 +72,7 @@
 
             ...mapActions('goalProfiles', ['getAllGoalProfiles', 'deleteGoalProfile']),
 
-            ...mapMutations('goalProfiles', {
-                onEdit: 'edit',
-                onDelete: 'delete',
-                onResetForm: 'resetForm',
-            }),
-
-
+            ...mapMutations('goalProfiles', ['editItem', 'deleteItem', 'resetForm']),
         },
     }
 </script>
