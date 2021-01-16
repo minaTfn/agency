@@ -1,10 +1,11 @@
 <template>
-    <div class="container">
-        <line-chart
-                v-if="loaded"
-                :chartData="chartData"
-                :options="options"/>
-    </div>
+  <div class="container">
+    <line-chart
+      v-if="loaded"
+      :chart-data="chartData"
+      :options="options"
+    />
+  </div>
 </template>
 
 <script>

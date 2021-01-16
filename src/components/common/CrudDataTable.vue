@@ -1,73 +1,95 @@
 <template>
-    <v-data-table
+  <v-data-table
 
 
-            :loading="isLoading"
-            loading-text="Loading..."
-            :headers="headers"
-            :items="data"
-            class="elevation-1"
-            :search="search"
-            :options.sync="options"
-            :hide-default-footer="disablePagination"
-            :items-per-page="perPage"
-            :server-items-length="totalCount"
-            :footer-props="{
-              itemsPerPageOptions: [ 10, 15,20, -1 ],
-            }">
+    :loading="isLoading"
+    loading-text="Loading..."
+    :headers="headers"
+    :items="data"
+    class="elevation-1"
+    :search="search"
+    :options.sync="options"
+    :hide-default-footer="disablePagination"
+    :items-per-page="perPage"
+    :server-items-length="totalCount"
+    :footer-props="{
+      itemsPerPageOptions: [ 10, 15,20, -1 ],
+    }"
+  >
+    <template v-slot:top>
+      <v-toolbar
+        v-if="isSearchActive"
+        flat
+      >
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          hide-details
+        />
+      </v-toolbar>
+      <v-dialog
+        v-model="deleteDialog"
+        max-width="500px"
+      >
+        <v-card>
+          <v-card-title class="headline">
+            Are you sure you want to delete this item?
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="closeDeleteDialog"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="deleteItemConfirm"
+            >
+              OK
+            </v-btn>
+            <v-spacer />
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </template>
 
-        <template v-slot:top>
-            <v-toolbar v-if="isSearchActive" flat>
-                <v-text-field
-                        v-model="search"
-                        append-icon="mdi-magnify"
-                        label="Search"
-                        hide-details
-                ></v-text-field>
-            </v-toolbar>
-            <v-dialog v-model="deleteDialog" max-width="500px">
-                <v-card>
-                    <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="closeDeleteDialog">Cancel</v-btn>
-                        <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
-                        <v-spacer></v-spacer>
-                    </v-card-actions>
-                </v-card>
-            </v-dialog>
-        </template>
+    <template
+      v-for="customValue in customValues"
+      :slot="`item.${customValue.name}`"
+      slot-scope="{item}"
+    >
+      {{ customValue.values[item[customValue.name]] }}
+    </template>
 
-        <template v-for="customValue in customValues"
-                  :slot="`item.${customValue.name}`"
-                  slot-scope="{item}">
-
-            {{ customValue.values[item[customValue.name]] }}
-
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-
-            <fragment v-if="actions">
-                <v-icon v-for="action in actions"
-                        :key="action.name"
-                        small
-                        class="mr-2"
-                        @click="$emit(action.event, item)">
-
-                    {{ action.icon }}
-
-                </v-icon>
-            </fragment>
+    <template v-slot:item.actions="{ item }">
+      <fragment v-if="actions">
+        <v-icon
+          v-for="action in actions"
+          :key="action.name"
+          small
+          class="mr-2"
+          @click="$emit(action.event, item)"
+        >
+          {{ action.icon }}
+        </v-icon>
+      </fragment>
 
 
-            <v-icon v-if="!disableDelete" small class="mr-2" @click="deleteItem(item)">
-                mdi-delete
-            </v-icon>
-
-        </template>
-
-    </v-data-table>
+      <v-icon
+        v-if="!disableDelete"
+        small
+        class="mr-2"
+        @click="deleteItem(item)"
+      >
+        mdi-delete
+      </v-icon>
+    </template>
+  </v-data-table>
 </template>
 <script>
     import {Fragment} from 'vue-fragment'

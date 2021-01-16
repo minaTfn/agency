@@ -1,28 +1,26 @@
 <template>
-    <div>
-
-        <div class="d-flex justify-space-between mb-7 ">
-            <div class="text-h5">
-                {{pageTitle | pluralize }}
-            </div>
-            <goal-form-modal :formTitle="pageTitle"/>
-        </div>
-
-        <crud-data-table
-                @getData="getAllGoals"
-                @deleteItem="deleteGoal"
-                :data="data"
-                @edit="editItem"
-                @delete="deleteItem"
-                @resetForm="resetForm"
-                :actions="actions"
-                :customValues="customValues"
-                :totalCount="totalCount"
-                :perPage="perPage"
-                :headers="headers"/>
-
+  <div>
+    <div class="d-flex justify-space-between mb-7 ">
+      <div class="text-h5">
+        {{ pageTitle | pluralize }}
+      </div>
+      <goal-form-modal :form-title="pageTitle" />
     </div>
 
+    <crud-data-table
+      :data="data"
+      :actions="actions"
+      :custom-values="customValues"
+      :total-count="totalCount"
+      :per-page="perPage"
+      :headers="headers"
+      @getData="getAllGoals"
+      @deleteItem="deleteGoal"
+      @edit="editItem"
+      @delete="deleteItem"
+      @resetForm="resetForm"
+    />
+  </div>
 </template>
 <script>
     import CrudDataTable from "../../components/common/CrudDataTable";

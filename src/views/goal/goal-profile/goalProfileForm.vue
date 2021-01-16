@@ -1,70 +1,84 @@
 <template>
-    <form @keydown="form.errors.clear($event.target.name)">
-        <v-container>
-            <v-row>
-                <v-col cols="12" sm="6">
-                    <v-text-field
-                            label="Name"
-                            v-model="form.name"
-                            name="name"
-                            autofocus
-                            :error-messages="form.errors.get('name')"
-                    ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6">
-                    <v-autocomplete
-                            v-model="form.agency_id"
-                            label="Agency"
-                            name="agency_id"
-                            :items="agencies"
-                            item-text="name"
-                            item-value="id"
-                            :error-messages="form.errors.get('agency_id')"
-                            clearable
-                            :disabled="isUpdate"
-                            flat
-                    ></v-autocomplete>
+  <form @keydown="form.errors.clear($event.target.name)">
+    <v-container>
+      <v-row>
+        <v-col
+          cols="12"
+          sm="6"
+        >
+          <v-text-field
+            v-model="form.name"
+            label="Name"
+            name="name"
+            autofocus
+            :error-messages="form.errors.get('name')"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="6"
+        >
+          <v-autocomplete
+            v-model="form.agency_id"
+            label="Agency"
+            name="agency_id"
+            :items="agencies"
+            item-text="name"
+            item-value="id"
+            :error-messages="form.errors.get('agency_id')"
+            clearable
+            :disabled="isUpdate"
+            flat
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="6"
+        >
+          <v-autocomplete
+            v-model="form.type"
+            label="Type"
+            name="type"
+            :items="types"
+            item-text="name"
+            item-value="id"
+            :error-messages="form.errors.get('type')"
+            flat
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="6"
+        >
+          <v-autocomplete
+            v-model="form.status"
+            label="Status"
+            name="status"
+            :items="statuses"
+            item-text="name"
+            item-value="id"
+            :error-messages="form.errors.get('status')"
+            flat
+          />
+        </v-col>
 
-                </v-col>
-                <v-col cols="12" sm="6">
-                    <v-autocomplete
-                            v-model="form.type"
-                            label="Type"
-                            name="type"
-                            :items="types"
-                            item-text="name"
-                            item-value="id"
-                            :error-messages="form.errors.get('type')"
-                            flat
-                    ></v-autocomplete>
-                </v-col>
-                <v-col cols="12" sm="6">
-                    <v-autocomplete
-                            v-model="form.status"
-                            label="Status"
-                            name="status"
-                            :items="statuses"
-                            item-text="name"
-                            item-value="id"
-                            :error-messages="form.errors.get('status')"
-                            flat
-                    ></v-autocomplete>
-                </v-col>
-
-                <v-card-actions class="mt-6 ml-auto">
-                    <v-btn text @click="cancel">
-                        Cancel
-                    </v-btn>
-                    <v-btn
-                            color="primary"
-                            @click="saveForm">
-                        Continue
-                    </v-btn>
-                </v-card-actions>
-
-            </v-row>
-        </v-container>
-    </form>
+        <v-card-actions class="mt-6 ml-auto">
+          <v-btn
+            text
+            @click="cancel"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            @click="saveForm"
+          >
+            Continue
+          </v-btn>
+        </v-card-actions>
+      </v-row>
+    </v-container>
+  </form>
 </template>
 
 <script>

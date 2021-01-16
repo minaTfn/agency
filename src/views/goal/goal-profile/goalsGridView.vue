@@ -1,22 +1,20 @@
 <template>
-    <div class="mt-8">
-
-        <crud-data-table
-                v-if="this.currentStep == 'addGoals'"
-                @getData="getAllGoalProfileGoals"
-                @deleteItem="deleteGoalProfileGoal"
-                :data="data"
-                @edit="editItem"
-                @delete="deleteItem"
-                disablePagination
-                @resetForm="resetForm"
-                :isSearchActive="false"
-                :totalCount="totalCount"
-                :perPage="perPage"
-                :headers="headers"/>
-
-    </div>
-
+  <div class="mt-8">
+    <crud-data-table
+      v-if="this.currentStep == 'addGoals'"
+      :data="data"
+      disable-pagination
+      :is-search-active="false"
+      :total-count="totalCount"
+      :per-page="perPage"
+      :headers="headers"
+      @getData="getAllGoalProfileGoals"
+      @deleteItem="deleteGoalProfileGoal"
+      @edit="editItem"
+      @delete="deleteItem"
+      @resetForm="resetForm"
+    />
+  </div>
 </template>
 <script>
     import CrudDataTable from "../../../components/common/CrudDataTable";
