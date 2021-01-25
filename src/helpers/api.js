@@ -2,12 +2,12 @@ import axios from "axios";
 import Vue from "vue";
 
 let baseUrl = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
-    ? 'http://192.168.7.24/api/v1/' : 'https://admin.reminitravel.ir/api/';
+    ? 'http://agency.local/api/v1/' : 'https://admin.reminitravel.ir/api/';
 
 const request = axios.create({
     baseURL: baseUrl,
     auth: {
-        username: 'tQxLglC7s85ubkJC9HtXHw2Jvfh-05Sf',
+        username: 'XwVP0dwIO50SCZsBKmavAU0nBjmYxU8B',
         password: '',
     },
 });
@@ -37,9 +37,20 @@ export default {
     },
     goalProfile: {
         list: (params = '') => request.get(`goal-profiles?expand=agency&${params}`).then(res => res.data),
-        goals: (goalProfileID) => request.get(`goal-profiles/${goalProfileID}?expand=goalProfileGoals`).then(res => res.data),
+        view: (id) => request.get(`goal-profiles/${id}`).then(res => res.data),
         create: (params) => request.post(`goal-profiles`, params).then(res => res.data),
-        update: (params) => request.put(`goal-profiles/${params.id}`, params).then(res => res.data.data),
+        update: (params) => request.put(`goal-profiles/${params.id}`, params).then(res => res.data),
         delete: (params) => request.delete(`goal-profiles/${params.id}`).then(res => res.data)
+    },
+    goalProfileGoal: {
+        create: (params) => request.post(`goal-profile-goals`, params).then(res => res.data),
+        update: (params) => request.put(`goal-profile-goals/${params.id}`, params).then(res => res.data.data),
+        delete: (params) => request.delete(`goal-profile-goals/${params.id}`).then(res => res.data)
+    },
+    quarter: {
+        list: (params = '') => request.get(`quarters?${params}`).then(res => res.data),
+        create: (params) => request.post(`quarters`, params).then(res => res.data.data),
+        update: (params) => request.put(`quarters/${params.id}`, params).then(res => res.data.data),
+        delete: (params) => request.delete(`quarters/${params.id}`).then(res => res.data)
     }
 };

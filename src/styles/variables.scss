@@ -23,3 +23,7 @@ $body-font-weight: 200;
 .v-list-item .v-list-item__title, .v-list-item .v-list-item__subtitle{
   text-shadow: none !important;
 }
+.editable_item{
+  border-bottom:1px dashed dodgerblue;
+  padding: 1px 2px;
+}

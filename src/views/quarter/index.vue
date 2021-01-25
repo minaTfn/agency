@@ -1,76 +1,64 @@
 <template>
-  <div>
-    <div class="d-flex justify-space-between mb-7 ">
-      <div class="text-h5">
-        {{ pageTitle | pluralize }}
-      </div>
-      <goal-form-modal :form-title="pageTitle" />
-    </div>
+    <div>
+        <div class="d-flex justify-space-between mb-7 ">
+            <div class="text-h5" id="pageTitle">
+                {{ pageTitle | pluralize }}
+            </div>
+            <quarter-form-modal :form-title="pageTitle"/>
+        </div>
 
-    <crud-data-table
-      :data="data"
-      :actions="actions"
-      :custom-values="customValues"
-      :total-count="totalCount"
-      :per-page="perPage"
-      :headers="headers"
-      @getData="getAllGoals"
-      @deleteItem="deleteGoal"
-      @edit="editItem"
-      @delete="deleteItem"
-      @resetForm="resetForm"
-    />
-  </div>
+        <crud-data-table
+                :data="data"
+                :actions="actions"
+                :total-count="totalCount"
+                :per-page="perPage"
+                :headers="headers"
+                @getData="getAllQuarters"
+                @deleteItem="deleteQuarter"
+                @edit="editItem"
+                @delete="deleteItem"
+                @resetForm="resetForm"
+        />
+    </div>
 </template>
 <script>
     import CrudDataTable from "../../components/common/CrudDataTable";
-    import GoalFormModal from "./formModal";
+    import QuarterFormModal from "./formModal";
     import {mapActions, mapMutations, mapState} from "vuex";
 
 
     export default {
-        name: "Goals",
-        components: {GoalFormModal, CrudDataTable},
+        name: "Quarters",
+        components: {QuarterFormModal, CrudDataTable},
 
         data: () => ({
-            pageTitle: 'Goal',
+            pageTitle: 'Quarter',
             headers: [
                 {text: 'Name', value: 'name'},
-                {text: 'Type', value: 'static'},
-                {text: 'Agency', value: 'agency.name'},
-                {text: 'Status', value: 'status'},
-                {text: 'Actions', value: 'actions', sortable: false, width:80},
+                {text: 'Start Date', value: 'start_date'},
+                {text: 'End Date', value: 'end_date'},
+                {text: 'Actions', value: 'actions', sortable: false, width: 80},
             ],
             actions: [
                 {name: 'edit', event: 'edit', icon: 'mdi-pencil'},
             ],
-            customValues: [
-                {
-                    name: 'status',
-                    values: {10: 'Active', 9: 'Inactive'}
-                },
-                {
-                    name: 'static',
-                    values: {0: 'Normal', 1: 'Static'}
-                },
-            ],
+            date:'09-28-2020',
             isLoading: false
         }),
 
         computed: {
             ...mapState({
-                data: state => state.goals.all,
-                totalCount: state => state.goals.meta.totalCount,
-                perPage: state => state.goals.meta.perPage,
-                agencies: state => state.goals.agencies,
+                data: state => state.quarters.all,
+                totalCount: state => state.quarters.meta.totalCount,
+                perPage: state => state.quarters.meta.perPage,
             }),
         },
 
         methods: {
 
-            ...mapActions('goals', ['getAllGoals', 'deleteGoal']),
+            ...mapActions('quarters', ['getAllQuarters', 'deleteQuarter']),
 
-            ...mapMutations('goals', ['editItem', 'deleteItem', 'resetForm',]),
+            ...mapMutations('quarters', ['editItem', 'deleteItem', 'resetForm',]),
 
 
         },

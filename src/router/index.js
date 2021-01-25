@@ -4,6 +4,7 @@ import Agency from '../views/agency/index.vue'
 import User from '../views/user/index.vue'
 import Goal from '../views/goal/index.vue'
 import GoalProfile from '../views/goal/goal-profile/index.vue'
+import Quarter from '../views/quarter/index.vue'
 import AgencyOverviewReport from '../views/reports/agencyOverview.vue'
 
 Vue.use(VueRouter)
@@ -28,6 +29,11 @@ const routes = [
     path: '/report/agency-overview',
     name: 'Agency Overview',
     component: AgencyOverviewReport
+  },
+  {
+    path: '/quarters',
+    name: 'Quarters',
+    component: Quarter
   },
   {
     path: '/users',

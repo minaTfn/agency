@@ -1,17 +1,17 @@
 import api from "../../helpers/api";
 import Form from "../../helpers/classes/Form";
-import {mixinMutations, mixinStates} from "../mixins.js";
 
 const state = () => ({
 
-    ...mixinStates(),
-
+    all: [],
+    actionType: 'create',
     form: new Form({
         goal_id: '',
         percentage: '',
-        id: ''
+        id: '',
+        goal_profile_id: 0
     }),
-    goalProfileId: 0,
+    goalProfileID: 0,
     goals: [],
 })
 
@@ -23,10 +23,9 @@ const getters = {
 
 const actions = {
 
-    getAllGoalProfileGoals({commit,state}) {
-
-        api.goalProfile.goals(state.goalProfileId).then(({items}) => {
-            commit('fetchAll', items);
+    getAllGoalProfileGoals({commit, state}) {
+        api.goalProfile.view(state.goalProfileID).then(({goalProfileGoals}) => {
+            commit('fetchAll', goalProfileGoals);
         });
     },
 
@@ -38,40 +37,50 @@ const actions = {
 
     deleteGoalProfileGoal({dispatch, state}) {
 
-        api.goalProfile.delete(state.form).then(() => {
+        api.goalProfileGoal.delete(state.form).then(() => {
 
             dispatch('getAllGoalProfileGoals');
 
             this._vm.$snackbar.showMessage({message: 'Item deleted successfully'})
         }).catch(error => {
-            this._vm.$snackbar.showMessage({message: error.response.data.name, color: 'error'})
+            this._vm.$snackbar.showMessage({message: error.response.data.message, color: 'error'})
         })
 
     },
 
-    updateGoalProfile({}, data) {
-        return api.goalProfile.update(data)
+    updateGoalProfileGoal({}, data) {
+        return api.goalProfileGoal.update(data)
     },
 
-    createGoalProfile({}, data) {
-        return api.goalProfile.create(data)
+    createGoalProfileGoal({}, data) {
+        return api.goalProfileGoal.create(data)
     },
 
-    save({dispatch, getters, commit}, data) {
+    save({dispatch, getters, commit, state}, data) {
 
-        const action = getters.isUpdate ? 'updateGoalProfile' : 'createGoalProfile'
+        const action = getters.isUpdate ? 'updateGoalProfileGoal' : 'createGoalProfileGoal'
 
         const message = getters.isUpdate ? 'Item updated' : 'Item created'
 
-        dispatch(action, data).then(() => {
+        return new Promise((resolve,reject) => {
+            dispatch(action, data).then(() => {
 
-            commit('resetForm');
-            dispatch('getAllGoalProfileGoals');
-            this._vm.$snackbar.showMessage({message: `${message} successfully`})
+                dispatch('getAllGoalProfileGoals');
 
-        }).catch(error => {
-            commit('getErrors', error.response.data)
-        });
+                this._vm.$snackbar.showMessage({message: `${message} successfully`})
+
+                resolve();
+
+            }).catch(error => {
+                if (error.response.status == 422) { // validation failed
+                    commit('getErrors', error.response.data)
+
+                    reject();
+                } else {
+                    this._vm.$snackbar.showMessage({message: error.response.data.message, color: 'error'})
+                }
+            });
+        })
 
     },
 
@@ -79,14 +88,46 @@ const actions = {
 
 const mutations = {
 
-    ...mixinMutations(),
+    updatePercentage(state, item) {
+        state.form.percentage = item;
+    },
 
     setGoalProfileId(state, ID) {
-        state.goalProfileId = ID
+        state.form.goal_profile_id = ID
+        state.goalProfileID = ID
     },
 
     fetchGoals(state, goals) {
         state.goals = goals
+    },
+
+    fetchAll(state, items) {
+        state.all = items
+    },
+
+    newItem(state) {
+        state.actionType = 'create';
+    },
+
+    editItem(state, item) {
+        state.actionType = 'update';
+        state.form = Object.assign(state.form, item)
+    },
+
+    deleteItem(state, item) {
+        state.actionType = 'delete';
+        state.form = Object.assign(state.form, item)
+    },
+
+    resetForm(state) {
+        state.form.reset();
+        state.form.goal_profile_id = state.goalProfileID
+    },
+    updateForm(state, item) {
+        Object.assign(state.form, item);
+    },
+    getErrors(state, error) {
+        state.form.errors.record(error)
     },
 }
 

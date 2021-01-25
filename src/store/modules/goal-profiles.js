@@ -69,7 +69,6 @@ const actions = {
         return new Promise((resolve,reject)=>{
             dispatch(action, data).then((response) => {
 
-                commit('resetForm');
                 dispatch('getAllGoalProfiles');
                 this._vm.$snackbar.showMessage({message: `${message} successfully`})
 
@@ -77,12 +76,10 @@ const actions = {
 
             }).catch(error => {
                 commit('getErrors', error.response.data)
+
                 reject(error.response.data);
             });
         })
-
-
-
     },
 
 }

@@ -66,9 +66,9 @@ class Errors {
      */
     clear(field) {
 
+
         if (field) {
             delete this.errors[field];
-
             return;
         }
 

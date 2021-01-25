@@ -6,6 +6,7 @@ import goals from './modules/goals'
 import snackbar from './modules/snackbar'
 import goalProfiles from './modules/goal-profiles'
 import goalProfileGoals from './modules/goal-profile-goals'
+import quarters from './modules/quarters'
 
 Vue.use(Vuex)
 
@@ -19,6 +20,7 @@ export default new Vuex.Store({
         goals,
         goalProfiles,
         goalProfileGoals,
+        quarters,
         snackbar,
     },
     strict: debug,
