@@ -54,11 +54,11 @@
 
         methods:{
             convertToFormat(value) {
-                return value ? Vue.moment(value).format(this.format) : ''
+                return value ? this.$moment(value).format(this.format) : ''
             },
 
             convertToPickerFormat(value) {
-                return value ? Vue.moment(value).format().substr(0, 10) : ''
+                return value ? this.$moment(value).format().substr(0, 10) : ''
             },
 
             valueChanged(date) {

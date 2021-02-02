@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="d-flex justify-space-between mb-7 ">
-            <div class="text-h5" id="pageTitle">
+            <div class="text-h5" data-test="pageTitle">
                 {{ pageTitle | pluralize }}
             </div>
             <quarter-form-modal :form-title="pageTitle"/>

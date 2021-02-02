@@ -1,18 +1,18 @@
 <template>
     <div>
-        <v-btn color="primary" ref="createNew" dark @click="newItem">
+        <v-btn color="primary" data-test="createNew" dark @click="newItem">
             <v-icon left> mdi-plus</v-icon>
             New {{ formTitle }}
         </v-btn>
 
-        <v-dialog id="formDialog"
+        <v-dialog id="jestFormDialog"
                   v-model="isModalOpen"
                   max-width="700px"
                   @click:outside="close"
                   @keydown.esc="close"
         >
             <v-card>
-                <form @keydown="form.errors.clear($event.target.name)">
+                <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="saveForm">
                     <v-card-title>
                         <span class="headline" v-html="title"/>
                     </v-card-title>
@@ -30,6 +30,7 @@
                                 </v-col>
                                 <v-col cols="12" sm="6">
                                     <date-picker name="start_date"
+                                                 ref="startDate"
                                                  :value.sync="form.start_date"
                                                  :error="form.errors.get('start_date')"
                                                  label="Start Date"
@@ -37,6 +38,7 @@
                                 </v-col>
                                 <v-col cols="12" sm="6">
                                     <date-picker name="end_date"
+                                                 ref="endDate"
                                                  :value.sync="form.end_date"
                                                  :error="form.errors.get('end_date')"
                                                  label="End Date"
@@ -48,10 +50,10 @@
 
                     <v-card-actions>
                         <v-spacer/>
-                        <v-btn color="blue darken-1" text @click="close">
+                        <v-btn id="jestCancelDialog" color="blue darken-1" text @click="close">
                             Cancel
                         </v-btn>
-                        <v-btn color="blue darken-1" text @click="saveForm">
+                        <v-btn color="blue darken-1" type="submit" text>
                             Save
                         </v-btn>
                     </v-card-actions>
