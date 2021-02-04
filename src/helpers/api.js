@@ -2,7 +2,7 @@ import axios from "axios";
 import Vue from "vue";
 
 let baseUrl = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
-    ? 'http://agency.local/api/v1/' : 'https://admin.reminitravel.ir/api/';
+    ? 'http://agency.local/api/v1/' : 'http://agency.local/api/v1/';
 
 const request = axios.create({
     baseURL: baseUrl,

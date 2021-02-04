@@ -50,20 +50,20 @@ const actions = {
         return api.quarter.create(data)
     },
 
-    save({dispatch, getters, commit}, data) {
+    async save({dispatch, getters, commit}, data) {
 
         const action = getters.isUpdate ? 'updateQuarter' : 'createQuarter'
 
         const message = getters.isUpdate ? 'Item updated' : 'Item created'
 
-        dispatch(action, data).then(() => {
-
+        await dispatch(action, data).then(() => {
             commit('resetForm');
             commit('closeModal');
             dispatch('getAllQuarters');
             this._vm.$snackbar.showMessage({message: `${message} successfully`})
-
+            console.log('response','res')
         }).catch(error => {
+            console.log('error',error.response.data)
             commit('getErrors', error.response.data)
         });
 
